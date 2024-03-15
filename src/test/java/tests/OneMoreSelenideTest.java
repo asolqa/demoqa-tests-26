@@ -3,10 +3,7 @@ package tests;
 
 import org.junit.jupiter.api.Test;
 
-
-import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Selectors.byTagName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -29,19 +26,17 @@ public class OneMoreSelenideTest {
         $("[data-filterable-for=wiki-pages-filter]").$(byText("SoftAssertions"))
                 .click();
 
-        $("#user-content-3-using-junit5-extend-test-class")
-                .parent()
-                .shouldHave(text("3. Using JUnit5 extend test class:"));
+        $("#wiki-body").shouldHave(text("""
+            @ExtendWith({SoftAssertsExtension.class})
+            class Tests {
+                @Test
+                void test() {
+                    Configuration.assertionMode = SOFT;
+                    open("page.html");
 
-        $("#user-content-3-using-junit5-extend-test-class")
-                .parent()
-                .sibling(0)
-                .shouldBe(visible);
-
-         $("#user-content-3-using-junit5-extend-test-class")
-                .parent()
-                .sibling(0)
-                .$$(byTagName("span")).shouldHave(exactTexts("@","ExtendWith", "SoftAssertsExtension", "class", "class", "Tests", "@", "Test", "void", "test", "Configuration", "assertionMode", "SOFT", "open", "\"page.html\"", "$", "\"#first\"", "should", "visible", "click", "$", "\"#second\"", "should", "visible", "click"));
-
+                    $("#first").should(visible).click();
+                    $("#second").should(visible).click();
+                }
+            }""")).shouldBe(visible);
     }
 }
